@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estrela Sênior · Jogo das Cores e Formas Tátil</title>
+<meta name="description" content="Jogo da velha adaptado com peças grandes e identificação tátil por formas. Projeto acadêmico: Estrela Sênior.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⭐</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#D3212D; --red-d:#A81822; --green:#1E7B3C; --green-d:#155C2C;
+  --board:#1F1F1F; --slot:#333; --paper:#FFFFFF; --wash:#F2F4F0; --ink:#1A1A1A; --mute:#4A4F4A;
+  --display:'Fredoka','Trebuchet MS',sans-serif; --body:'Nunito','Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{--paper:#161816; --wash:#1E211E; --ink:#F4F5F2; --mute:#C2C7C0; --red:#F04752; --green:#3FB463}
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--body);font-size:1.2rem;line-height:1.6;color:var(--ink);background:var(--paper)}
+h1,h2,h3{font-family:var(--display);line-height:1.1;margin:0 0 .5em}
+h1{font-size:clamp(2.6rem,7vw,4.6rem)}
+h2{font-size:clamp(2rem,4.5vw,3rem)}
+h3{font-size:1.5rem}
+p{margin:0 0 1em;max-width:62ch}
+a{color:inherit}
+:focus-visible{outline:4px solid var(--green);outline-offset:3px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 1.5rem}
+section{padding:5rem 0}
+header{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:4px solid var(--red)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding-top:.7rem;padding-bottom:.7rem}
+.logo{font-family:var(--display);font-weight:700;font-size:1.5rem;text-decoration:none;display:flex;align-items:center;gap:.5rem}
+.logo svg{width:34px;height:34px}
+nav{display:flex;gap:1.4rem;flex-wrap:wrap}
+nav a{text-decoration:none;font-weight:800}
+nav a:hover{color:var(--red)}
+.btn{display:inline-block;font-family:var(--display);font-weight:700;font-size:1.3rem;padding:.8em 1.5em;border-radius:14px;background:var(--red);color:#fff;text-decoration:none;border:0;cursor:pointer;box-shadow:0 5px 0 var(--red-d)}
+.btn:hover{transform:translateY(2px);box-shadow:0 3px 0 var(--red-d)}
+.hbtn{font-size:1.1rem;padding:.5em 1.2em}
+.btn.g{background:var(--green);box-shadow:0 5px 0 var(--green-d)}
+.btn.g:hover{box-shadow:0 3px 0 var(--green-d)}
+
+/* HERO */
+.hero{padding:3.5rem 0 5rem;background:var(--wash)}
+.hero .wrap{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center}
+.tag{display:inline-block;background:var(--red);color:#fff;font-family:var(--display);font-weight:700;padding:.2em .8em;border-radius:8px;margin-bottom:1rem}
+.hero h1 span{color:var(--green)}
+.hero .btn{margin:0 .4rem .8rem 0}
+.lead{font-size:1.35rem}
+.game{background:var(--paper);border-radius:24px;padding:1.5rem;box-shadow:0 10px 0 rgba(0,0,0,.12)}
+.board{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;background:var(--board);padding:14px;border-radius:18px;aspect-ratio:1}
+.cell{background:var(--slot);border:0;border-radius:12px;cursor:pointer;display:grid;place-items:center;padding:8%;box-shadow:inset 0 4px 8px rgba(0,0,0,.6)}
+.cell:hover:not(:disabled){background:#454545}
+.cell:disabled{cursor:default}
+.cell svg{width:100%;height:100%}
+.status{font-family:var(--display);font-size:1.5rem;font-weight:700;text-align:center;margin:1rem 0 .8rem;min-height:2.2em}
+.game .btn{display:block;margin:0 auto;font-size:1.1rem}
+.who{display:inline-block;width:1.1em;height:1.1em;vertical-align:-.15em}
+
+
+.buy{display:grid;grid-template-columns:1fr 1.2fr;gap:3rem;align-items:center;margin-top:2rem}
+.box{background:var(--red);color:#fff;border-radius:20px;padding:2rem;display:flex;flex-direction:column;align-items:center;text-align:center;gap:.3rem;font-family:var(--display);font-size:1.3rem;box-shadow:0 10px 0 var(--red-d)}
+.box svg{color:#fff!important}
+.box .mini{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:var(--board);padding:12px;border-radius:14px;margin-top:1rem;width:70%}
+.box .mini svg{width:100%;height:auto;aspect-ratio:1;color:inherit!important}
+.inbox{padding-left:1.2rem;margin:0 0 1rem}
+.price small{font-size:1.1rem;font-family:var(--body);color:var(--mute);font-weight:600}
+.qty{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin:.5rem 0 1.2rem}
+.qty button{width:3rem;height:3rem;font-size:1.6rem;font-weight:800;border-radius:12px;border:3px solid var(--green);background:var(--paper);color:var(--ink);cursor:pointer}
+.qty button:hover{background:var(--green);color:#fff}
+.qty output{min-width:2ch;text-align:center;font-family:var(--display);font-size:1.6rem;font-weight:700}
+.note{font-size:1rem;color:var(--mute);margin-top:1rem}
+#buyw,#buyi{margin:0 .5rem .6rem 0}
+/* CONTEÚDO */
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;margin-top:2.5rem}
+.feat{border-top:8px solid var(--green);padding-top:1rem}
+.feat:nth-child(even){border-color:var(--red)}
+.feat p{color:var(--mute);margin:0}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
+.alt{background:var(--wash)}
+ol.steps{padding:0;margin:0;list-style:none;counter-reset:s}
+ol.steps li{counter-increment:s;display:flex;gap:1rem;margin-bottom:1.2rem}
+ol.steps li::before{content:counter(s);flex:none;width:2.6rem;height:2.6rem;border-radius:50%;background:var(--green);color:#fff;font-family:var(--display);font-weight:700;display:grid;place-items:center}
+.persona{background:var(--green);color:#fff;border-radius:24px;padding:2rem}
+.persona p{max-width:none}
+.club{background:var(--red);color:#fff;border-radius:24px;padding:2.5rem;display:grid;grid-template-columns:1.4fr 1fr;gap:2rem;align-items:center}
+.club .btn{background:#fff;color:var(--red-d);box-shadow:0 5px 0 rgba(0,0,0,.25)}
+.club ul{margin:0;padding-left:1.2rem}
+.price{font-family:var(--display);font-size:3rem;font-weight:700;color:var(--green)}
+footer{background:var(--board);color:#ddd;padding:2.5rem 0;font-size:1rem}
+footer p{max-width:80ch;margin:.4rem 0}
+@media(max-width:820px){
+  .hero .wrap,.split,.club,.buy{grid-template-columns:1fr}
+  .hbtn{display:none}
+  section{padding:3.5rem 0}
+  nav{display:none}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="sq" viewBox="0 0 100 100"><rect x="8" y="8" width="84" height="84" rx="10" fill="#1E7B3C"/><rect x="8" y="8" width="84" height="84" rx="10" fill="none" stroke="#3FB463" stroke-width="5"/></symbol>
+  <symbol id="tr" viewBox="0 0 100 100"><path d="M50 8 L94 88 H6 Z" fill="#D3212D" stroke="#F04752" stroke-width="5" stroke-linejoin="round"/></symbol>
+  <symbol id="star" viewBox="0 0 100 100"><path d="M50 4 L61 39 L96 50 L61 61 L50 96 L39 61 L4 50 L39 39 Z" fill="none" stroke="currentColor" stroke-width="7" stroke-linejoin="round"/></symbol>
+</svg>
+
+<header>
+  <div class="wrap">
+    <a class="logo" href="#topo"><svg style="color:var(--red)"><use href="#star"/></svg>Estrela Sênior</a>
+    <nav aria-label="Principal">
+      <a href="#jogar">Experimente</a><a href="#diferenciais">Diferenciais</a><a href="#como">Como jogar</a><a href="#clube">Clube</a><a href="#projeto">O projeto</a>
+    </nav>
+    <a class="btn hbtn" href="#comprar">Comprar</a>
+  </div>
+</header>
+
+<main id="topo">
+<section class="hero" id="jogar">
+  <div class="wrap">
+    <div>
+      <span class="tag">Lançamento</span>
+      <h1>Jogo das Cores e Formas <span>Tátil</span></h1>
+      <p class="lead">Um jogo da velha com peças grandes, encaixe fácil e formas que se reconhecem pelo toque. Para exercitar a mente no seu tempo, em casa ou na instituição.</p>
+      <p><strong>A Estrela sempre brincou com você. Agora, cuidando das suas lembranças.</strong></p>
+      <a class="btn" href="#comprar">Comprar agora</a> <a class="btn g" href="#board">Jogue uma partida</a>
+    </div>
+    <div class="game" aria-label="Jogo da velha para experimentar">
+      <div class="board" id="board" role="group" aria-label="Tabuleiro 3 por 3"></div>
+      <div class="status" id="status" aria-live="polite"></div>
+      <button class="btn g" id="reset" type="button">Novo jogo</button>
+    </div>
+  </div>
+</section>
+
+<section id="diferenciais">
+  <div class="wrap">
+    <h2>Pensado para mãos e olhos que precisam de mais cuidado</h2>
+    <div class="grid4">
+      <div class="feat"><h3>Formas que se sentem</h3><p>Quadrados e triângulos em relevo. Dá para saber quem é quem só com o toque, sem depender da visão.</p></div>
+      <div class="feat"><h3>Peças grandes e robustas</h3><p>Formato anatômico que facilita a pega, mesmo com tremores ou pouca força nas mãos.</p></div>
+      <div class="feat"><h3>Encaixe com folga</h3><p>Os nichos do tabuleiro têm folgas milimétricas que perdoam o tremor e evitam a frustração.</p></div>
+      <div class="feat"><h3>Cores em alto contraste</h3><p>Verde e vermelho fortes sobre tabuleiro escuro, para quem tem baixa acuidade visual.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="como">
+  <div class="wrap split">
+    <div>
+      <h2>Como jogar</h2>
+      <ol class="steps">
+        <li><span>Um jogador fica com os <strong>quadrados verdes</strong> e o outro com os <strong>triângulos vermelhos</strong>.</span></li>
+        <li><span>Cada um, na sua vez, encaixa uma peça em um espaço vazio do tabuleiro.</span></li>
+        <li><span>Vence quem formar primeiro uma linha de três peças iguais: na horizontal, vertical ou diagonal.</span></li>
+        <li><span>Se todos os espaços forem preenchidos sem linha, o jogo empata. É só começar outra partida.</span></li>
+      </ol>
+      <p>O manual de regras vem impresso em fonte grande (corpo 16+), com ícones de alto contraste, e fica fixado na tampa da embalagem.</p>
+    </div>
+    <div class="persona">
+      <h3>Feito para pessoas como o Seu João</h3>
+      <p>João tem 72 anos, mora em um lar de idosos e guarda com carinho as lembranças da juventude. Os tremores nas mãos fazem os jogos comuns parecerem pequenos demais.</p>
+      <p style="margin:0">Ele quer um desafio para a cabeça que não exponha suas limitações. É para ele que este jogo existe.</p>
+    </div>
+  </div>
+</section>
+
+<section id="clube">
+  <div class="wrap">
+    <div class="club">
+      <div>
+        <h2>Clube Estrela Memória</h2>
+        <p>Um relacionamento que continua depois da compra. Sem excesso de mensagens e com respeito à privacidade da sua família.</p>
+        <ul>
+          <li><strong>Peça Amiga:</strong> reposição de peças perdidas, gratuita ou a baixo custo</li>
+          <li>Cartilhas semestrais com exercícios de estímulo cognitivo e motor</li>
+          <li>Conteúdos para cuidadores e familiares sobre envelhecimento ativo</li>
+          <li>Suporte por WhatsApp, inclusive com mensagens de áudio</li>
+        </ul>
+      </div>
+      <div>
+        <p>Cadastro rápido pelo QR Code na embalagem.</p>
+        <a class="btn" href="#projeto">Saiba mais</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="comprar">
+  <div class="wrap">
+    <h2>Leve o jogo para casa</h2>
+    <div class="buy">
+      <div class="box" aria-hidden="true">
+        <svg viewBox="0 0 100 100" style="width:64px;color:var(--red)"><use href="#star"/></svg>
+        <strong>Estrela Sênior</strong>
+        <span>Jogo das Cores e Formas Tátil</span>
+        <div class="mini"><svg><use href="#sq"/></svg><svg><use href="#tr"/></svg><svg><use href="#sq"/></svg><svg><use href="#tr"/></svg><svg><use href="#sq"/></svg><svg><use href="#tr"/></svg><svg><use href="#sq"/></svg><svg><use href="#tr"/></svg><svg><use href="#sq"/></svg></div>
+      </div>
+      <div>
+        <h3>O que vem na caixa</h3>
+        <ul class="inbox">
+          <li>1 tabuleiro com encaixes folgados</li>
+          <li>5 quadrados verdes e 4 triângulos vermelhos, grandes e com relevo</li>
+          <li>1 manual de regras em fonte grande, fixado na tampa</li>
+          <li>QR Code para entrar no Clube Estrela Memória e pedir peças de reposição</li>
+        </ul>
+        <div class="price">R$ 87,00 <small>por unidade</small></div>
+        <div class="qty">
+          <label for="q">Quantidade</label>
+          <button type="button" id="minus" aria-label="Diminuir quantidade">−</button>
+          <output id="q" aria-live="polite">1</output>
+          <button type="button" id="plus" aria-label="Aumentar quantidade">+</button>
+          <span>Total: <strong id="tot">R$ 87,00</strong></span>
+        </div>
+        <a class="btn" id="buyw" href="#" target="_blank" rel="noopener">Comprar pelo WhatsApp</a>
+        <a class="btn g" id="buyi" href="#" target="_blank" rel="noopener">Sou instituição (lar, clínica)</a>
+        <p class="note">Para lares, clínicas e hospitais há condições especiais em volume. Também vendido em farmácias, lojas ortopédicas e catálogos institucionais. Valor sugerido, dentro da faixa de R$ 84 a R$ 90.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projeto">
+  <div class="wrap">
+    <h2>Sobre o projeto</h2>
+    <p>Este site faz parte do Trabalho Integrador <em>Do protótipo ao relacionamento com o consumidor</em>, das disciplinas de Gestão do Relacionamento com o Consumidor e Produção (Bacharelado em Administração, 3º semestre).</p>
+    <p>Depois de visitar um lar para idosos, a equipe do <strong>Projeto Cores e Formas</strong> observou longos períodos de ócio, tremores nas mãos e a dificuldade de usar jogos com peças pequenas. O resultado foi um protótipo em impressão 3D, feito com tampas de garrafa PET. Para o lançamento, propomos a produção por injeção plástica em ABS ou polipropileno, que deixa a superfície lisa, higienizável e mais barata em escala.</p>
+    <p><strong>Equipe:</strong> Caio Santana Conceição, Clisman Lucas Borges do Rêgo Santana, Deivid Almeida da Conceição, Fernando de Vasconcelos Costa, Fellipe Matheus Santos Nascimento e Gustavo Schramm.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><strong>Estrela Sênior · Tradição que acompanha todas as fases da vida.</strong></p>
+    <p>Projeto acadêmico e fictício. A marca Estrela pertence aos seus respectivos titulares e é usada aqui apenas para fins educacionais, sem qualquer vínculo com a empresa.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var board=document.getElementById('board'), status=document.getElementById('status'), reset=document.getElementById('reset');
+  var L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  var names={sq:'Quadrados verdes',tr:'Triângulos vermelhos'};
+  var cells=[],state,turn,over;
+  function icon(k,cls){return '<svg'+(cls?' class="'+cls+'"':'')+' aria-hidden="true"><use href="#'+k+'"/></svg>'}
+  function say(){status.innerHTML=over||('Vez de: '+icon(turn,'who')+' '+names[turn])}
+  function start(){
+    state=Array(9).fill(null);turn='sq';over=null;board.innerHTML='';cells=[];
+    for(var i=0;i<9;i++){
+      var b=document.createElement('button');b.type='button';b.className='cell';
+      b.setAttribute('aria-label','Espaço '+(i+1)+', vazio');
+      (function(i,b){b.addEventListener('click',function(){play(i)})})(i,b);
+      board.appendChild(b);cells.push(b);
+    }
+    say();
+  }
+  function play(i){
+    if(state[i]||over)return;
+    state[i]=turn;cells[i].innerHTML=icon(turn);cells[i].disabled=true;
+    cells[i].setAttribute('aria-label','Espaço '+(i+1)+', '+names[turn]);
+    var w=L.find(function(l){return l.every(function(x){return state[x]===turn})});
+    if(w){over=icon(turn,'who')+' '+names[turn]+' venceram!';cells.forEach(function(c){c.disabled=true});}
+    else if(state.every(Boolean)){over='Empate! Que tal outra partida?'}
+    else{turn=turn==='sq'?'tr':'sq'}
+    say();
+  }
+  reset.addEventListener('click',start);
+  start();
+
+  /* Compra */
+  var WHATS='5575900000000'; /* TROQUE pelo seu número com DDI+DDD */
+  var PRECO=87, n=1, q=document.getElementById('q'), tot=document.getElementById('tot');
+  function brl(v){return 'R$ '+v.toFixed(2).replace('.',',')}
+  function upd(){
+    q.textContent=n;tot.textContent=brl(n*PRECO);
+    var m='Olá! Quero comprar '+n+' unidade(s) do Estrela Sênior - Jogo das Cores e Formas Tátil ('+brl(n*PRECO)+').';
+    document.getElementById('buyw').href='https://wa.me/'+WHATS+'?text='+encodeURIComponent(m);
+    document.getElementById('buyi').href='https://wa.me/'+WHATS+'?text='+encodeURIComponent('Olá! Represento uma instituição e gostaria de um orçamento em volume do Estrela Sênior.');
+  }
+  document.getElementById('plus').addEventListener('click',function(){if(n<99){n++;upd()}});
+  document.getElementById('minus').addEventListener('click',function(){if(n>1){n--;upd()}});
+  upd();
+})();
+</script>
+</body>
+</html>
